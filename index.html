@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1">
+    <link rel="stylesheet" href="css/swiper.min.css">
+    <script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="js/swiper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <title>雙妹平安香水</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .swiper-wrapper {
+            -webkit-perspective: 1200px;
+            -moz-perspective: 1200px;
+            -ms-perspective: 1200px;
+            perspective: 1200px;
+        }
+        .swiper-slide{
+            position: relative;
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+            -ms-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            background-size:100% auto;
+            /*background-size:contain;*/
+            overflow:hidden;
+            text-align:center;
+            line-height:300px;
+        }
+        .swiper-slide img{
+            max-width:100%;
+        }
+
+        /* music */
+        @-webkit-keyframes reverseRotataZ{
+            0%{-webkit-transform: rotateZ(0deg);}
+            100%{-webkit-transform: rotateZ(-360deg);}
+        }
+        @-webkit-keyframes rotataZ{
+            0%{-webkit-transform: rotateZ(0deg);}
+            100%{-webkit-transform: rotateZ(360deg);}
+        }
+        #musicControl{
+            position:fixed;
+            right:10px;
+            top:20px;
+            margin-top:0;
+            display:inline-block;
+            z-index:99999999
+        }
+        #musicControl a{
+            display:inline-block;
+            width: 25px;
+            height: 25px;
+            overflow:hidden;
+            background:url('img/mcbg.png') no-repeat;
+            background-size:100%;
+        }
+        #musicControl a audio{
+            width:100%;
+            height:56px;
+        }
+        #musicControl a.stop {
+            background-position:left bottom;
+        }
+        #musicControl a.on {
+            background-position:0 1px;
+            -webkit-animation: reverseRotataZ 1.2s linear infinite;
+        }
+    </style>
+</head>
+<body>
+<div style="max-width:640px; margin:0 auto;">
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="img/pic1.jpg"  ></div>
+            <div class="swiper-slide"><img src="img/pic2.jpg"  ></div>
+            <div class="swiper-slide"><img src="img/pic3.jpg"  ></div>
+            <div class="swiper-slide"><img src="img/pic4.jpg"  ></div>
+            <div class="swiper-slide"><img src="img/pic5.jpg"  ></div>
+             <div class="swiper-slide"><img src="img/pic6.jpg"  ></div>
+            <div class="swiper-slide"><img src="img/pic7.jpg"  ></div>
+        </div>
+    </div>
+</div>
+<span id="musicControl">
+        <a id="mc_play" class="on" onclick="play_music();">
+            <audio id="musicfx" loop="loop" autoplay="autoplay">
+                <source src="src/mc.mp3" type="audio/mpeg">
+            </audio>
+        </a>
+ </span>
+
+<script type = "text/javascript">
+    function fixPagesHeight() {
+        $('.swiper-slide,.swiper-container').css({
+            height: $(window).height()
+        })
+    }
+    $(window).on('resize', function() {
+        fixPagesHeight();
+    });
+    fixPagesHeight();
+    var mySwiper = new Swiper('.swiper-container',{
+        direction: 'vertical',
+        mousewheelControl: true,
+        watchSlidesProgress: true,
+        onInit: function(swiper) {
+            swiper.myactive = 0;
+        },
+        onProgress: function(swiper) {
+            for (var i = 0; i < swiper.slides.length; i++) {
+                var slide = swiper.slides[i];
+                var progress = slide.progress;
+                var translate,boxShadow;
+                translate = progress * swiper.height * 0.8;
+                scale = 1 - Math.min(Math.abs(progress * 0.2), 1);
+                boxShadowOpacity = 0;
+                slide.style.boxShadow = '0px 0px 10px rgba(0,0,0,' + boxShadowOpacity + ')';
+                if (i == swiper.myactive) {
+                    es = slide.style;
+                    es.webkitTransform = es.MsTransform = es.msTransform = es.MozTransform = es.OTransform = es.transform = 'translate3d(0,' + (translate) + 'px,0) scale(' + scale + ')';
+                    es.zIndex=0;
+                }else{
+                    es = slide.style;
+                    es.webkitTransform = es.MsTransform = es.msTransform = es.MozTransform = es.OTransform = es.transform ='';
+                    es.zIndex=1;
+                }
+            }
+        },
+        onTransitionEnd: function(swiper, speed) {
+            for (var i = 0; i < swiper.slides.length; i++) {
+                //	es = swiper.slides[i].style;
+                //	es.webkitTransform = es.MsTransform = es.msTransform = es.MozTransform = es.OTransform = es.transform = '';
+                //	swiper.slides[i].style.zIndex = Math.abs(swiper.slides[i].progress);
+            }
+            swiper.myactive = swiper.activeIndex;
+        },
+        onSetTransition: function(swiper, speed) {
+            for (var i = 0; i < swiper.slides.length; i++) {
+                //if (i == swiper.myactive) {
+                es = swiper.slides[i].style;
+                es.webkitTransitionDuration = es.MsTransitionDuration = es.msTransitionDuration = es.MozTransitionDuration = es.OTransitionDuration = es.transitionDuration = speed + 'ms';
+                //}
+            }
+        }
+    });
+</script>
+<script>
+    function play_music(){
+        if($('#mc_play').hasClass('on')){
+            $('#mc_play audio').get(0).pause();
+            $('#mc_play').attr('class','stop');
+        }else{
+            $('#mc_play audio').get(0).play();
+            $('#mc_play').attr('class','on');
+        }
+        event.stopPropagation();
+    }
+    function just_play(){
+        $('#mc_play audio').get(0).play();
+        $('#mc_play').attr('class','on');
+        event.stopPropagation();
+    }
+    //  判断是否在微信打开，不是在微信自动播放，在微信需要点击才能播放
+    function is_weixn(){
+//        return false;
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i)=="micromessenger"){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    window.onload=function(){
+        if (!is_weixn()){
+            just_play();
+        }else{
+            function audioAutoPlay(id){
+                var audio = document.getElementById(id),
+                        play = function(){
+                            audio.play();
+                            document.removeEventListener("touchstart",play, false);
+                        };
+                audio.play();
+                document.addEventListener("WeixinJSBridgeReady", function () {
+                    play();
+                }, false);
+                document.addEventListener('YixinJSBridgeReady', function() {
+                    play();
+                }, false);
+                document.addEventListener("touchstart",play, false);
+            }
+            audioAutoPlay('musicfx');
+        }
+    }
+
+</script>
+</body>
+</html>
